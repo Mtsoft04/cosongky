@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Song Kỳ</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600&family=Noto+Serif:wght@700&family=Noto+Serif+TC:wght@700&display=swap">
+<style>
+:root{--bg:#eef1ec;--tx:#14231f;--mut:#566761;--card:#fbfcfa;--ln:#cdd8cf;--red:#b3261e;--blue:#1d3a7a;--gold:#c8962b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1816;--tx:#e6ede8;--mut:#93a69d;--card:#15251f;--ln:#27403a;--red:#e8786e;--blue:#8fa8e6}}
+:root[data-theme="dark"]{--bg:#0e1816;--tx:#e6ede8;--mut:#93a69d;--card:#15251f;--ln:#27403a;--red:#e8786e;--blue:#8fa8e6}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font:16px/1.55 "Be Vietnam Pro",system-ui,sans-serif}
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;border-bottom:1px solid var(--ln)}
+h1{font:700 28px "Noto Serif",serif;margin:0;letter-spacing:.02em}
+h1 small{font:400 13px "Be Vietnam Pro",sans-serif;color:var(--mut);margin-left:10px;letter-spacing:0}
+nav button,.btns button,#promo button{font:inherit;color:var(--tx);background:none;border:1px solid var(--ln);border-radius:8px;padding:6px 14px;cursor:pointer}
+nav button.on{background:var(--tx);color:var(--bg);border-color:var(--tx)}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.btns button:hover,#promo button:hover{border-color:var(--gold)}
+.btns button.on{background:var(--tx);color:var(--bg);border-color:var(--tx)}
+.opt{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:14px;color:var(--mut)}
+select{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--ln);border-radius:6px;padding:3px 6px}
+.wrap{display:flex;flex-wrap:wrap;gap:24px;justify-content:center;padding:20px;max-width:1000px;margin:0 auto}
+.bw{flex:1 1 440px;max-width:560px}
+svg{width:100%;height:auto;display:block;touch-action:manipulation}
+aside{flex:1 1 260px;max-width:340px;display:flex;flex-direction:column;gap:12px}
+#turn{font:700 20px "Noto Serif",serif;display:flex;align-items:center;gap:10px}
+.dot{width:16px;height:16px;border-radius:50%;display:inline-block}
+#msg{min-height:3em;color:var(--mut)}
+#msg.w{color:var(--red);font-weight:600}
+#promo{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+#hist{margin:0;padding:0 0 0 28px;max-height:240px;overflow:auto;border-top:1px solid var(--ln);padding-top:8px;font-size:14px}
+#hist li.r::marker{color:var(--red)}#hist li.b::marker{color:var(--blue)}
+.leg{font-size:13px;color:var(--mut)}
+#rules{max-width:760px;margin:0 auto;padding:20px 20px 48px}
+#rules h2{font:700 21px "Noto Serif",serif;margin:30px 0 8px}
+#rules p,#rules li{max-width:68ch}
+table{border-collapse:collapse;width:100%;margin:8px 0;font-size:15px;background:var(--card)}
+th,td{border:1px solid var(--ln);padding:6px 10px;text-align:left;vertical-align:top}
+td:first-child{white-space:nowrap;font-weight:600}
+.note{border-left:4px solid var(--gold);padding:4px 14px;background:var(--card)}
+#ask{border:1px solid var(--gold);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:8px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header>
+<h1>Song Kỳ<small>cờ vua × cờ tướng</small></h1>
+<nav><button id="t1" class="on">Chơi</button> <button id="t2">Luật chơi</button></nav>
+</header>
+
+<main id="play">
+<div class="wrap">
+<div class="bw"><svg id="svg" viewBox="0 0 568 628" role="img" aria-label="Bàn cờ Song Kỳ 9 cột 10 hàng"></svg></div>
+<aside>
+<div class="btns" id="modes"><button data-m="song">Song Kỳ</button><button data-m="sb">Song Kỳ cân bằng</button><button data-m="xq">Cờ tướng</button><button data-m="up">Cờ úp</button><button data-m="ch">Cờ vua</button></div>
+<div class="opt"><label>Đối thủ <select id="sOpp"><option value="0">Người</option><option value="1">Máy</option></select></label>
+<span id="aiopt" hidden><label>Cấp độ <select id="sLvl"><option value="0">Dễ</option><option value="1" selected>Thường</option><option value="2">Sơ trung</option><option value="3">Trung</option><option value="4">Đại tướng</option><option value="5">Đại cao thủ</option></select></label> <label>Bạn cầm <select id="sMe"><option value="r">Đỏ</option><option value="b">Lam</option></select></label></span></div>
+<div id="turn"></div>
+<div id="msg"></div>
+<div id="ask" hidden><div id="aq"></div><div class="btns"><button class="y">Đồng ý</button><button class="n">Hủy</button></div></div>
+<div id="promo" hidden></div>
+<div class="btns"><button id="bu">Đi lại</button><button id="bn">Ván mới</button><button id="bd">Hòa</button><button id="br">Xin thua</button></div>
+<div class="leg" id="leg"></div>
+<ol id="hist"></ol>
+</aside>
+</div>
+</main>
+
+<main id="rules" hidden>
+<h1 style="font-size:24px">Hướng dẫn luật chơi</h1>
+<p>Song Kỳ là trò chơi hai người. Đỏ chơi cờ tướng, Lam chơi cờ vua, hai hệ quân giao chiến trên cùng một bàn. Mỗi quân giữ nguyên cách đi riêng của nó và ăn được bất kỳ quân nào của đối phương.</p>
+
+<h2>Bàn cờ và cách xếp quân</h2>
+<ul>
+<li>Bàn có 9 cột (A–I) và 10 hàng (1–10). Quân đứng trên giao điểm, mỗi giao điểm chứa tối đa một quân.</li>
+<li>Dòng sông nằm giữa hàng 5 và hàng 6. Cung của Đỏ là vùng 3×3 gồm cột D–F, hàng 1–3. Chỉ tướng và sĩ bị giới hạn trong cung, quân cờ vua đi tự do trên toàn bàn.</li>
+<li>Mỗi bên có 16 quân. Đỏ đi trước.</li>
+<li>Lam (cờ vua, ở trên): hàng 10 gồm xe (A), mã (B), tượng (C), hậu (D), vua (F), tượng (G), mã (H), xe (I). Hàng 9 là tám tốt ở các cột đó. Cột E để trống.</li>
+<li>Đỏ (cờ tướng, ở dưới): hàng 1 gồm xe, mã, tượng, sĩ, tướng, sĩ, tượng, mã, xe ở cột A–I. Hàng 3: hai pháo ở cột B và H. Hàng 4: năm tốt ở cột A, C, E, G, I.</li>
+</ul>
+
+<h2>Cách đi của quân Lam (cờ vua)</h2>
+<table>
+<tr><td>Vua</td><td>Một bước theo mọi hướng, không bị giới hạn trong cung.</td></tr>
+<tr><td>Hậu</td><td>Ngang, dọc hoặc chéo, xa tùy ý nếu đường thông.</td></tr>
+<tr><td>Xe</td><td>Ngang hoặc dọc, xa tùy ý.</td></tr>
+<tr><td>Tượng</td><td>Chéo, xa tùy ý.</td></tr>
+<tr><td>Mã</td><td>Hình chữ L, nhảy qua quân khác, không bị cản chân.</td></tr>
+<tr><td>Tốt</td><td>Đi thẳng một bước vào điểm trống, ăn chéo một bước. Nước đầu được đi hai bước nếu cả hai điểm đều trống. Tốt Lam tiến xuống phía hàng 1, đến hàng 1 thì phong thành hậu, xe, tượng hoặc mã.</td></tr>
+</table>
+
+<h2>Cách đi của quân Đỏ (cờ tướng)</h2>
+<table>
+<tr><td>Tướng</td><td>Một bước ngang hoặc dọc, chỉ trong cung.</td></tr>
+<tr><td>Sĩ</td><td>Một bước chéo, chỉ trong cung.</td></tr>
+<tr><td>Tượng</td><td>Hai bước chéo, không qua sông, bị chặn nếu điểm giữa có quân.</td></tr>
+<tr><td>Xe</td><td>Ngang hoặc dọc, không nhảy qua quân.</td></tr>
+<tr><td>Pháo</td><td>Đi như xe khi không ăn. Khi ăn, phải nhảy qua đúng một quân làm ngòi rồi ăn quân đầu tiên phía sau.</td></tr>
+<tr><td>Mã</td><td>Một bước thẳng rồi một bước chéo ra ngoài. Bị cản nếu điểm thẳng đầu tiên có quân.</td></tr>
+<tr><td>Tốt</td><td>Đi thẳng về phía trước. Sau khi qua sông được đi thêm ngang, không bao giờ đi lùi.</td></tr>
+</table>
+
+<h2>Ăn quân và vật cản</h2>
+<ul>
+<li>Quân nào đi đúng luật đến điểm có quân đối phương thì ăn quân đó, dù khác hệ. Xe cờ vua ăn được pháo, mã cờ tướng ăn được tượng cờ vua.</li>
+<li>Không ăn quân cùng bên, không đi vào điểm có quân cùng bên.</li>
+<li>Quân của cả hai hệ đều là vật cản. Quân cờ vua đứng giữa đường xe cờ tướng thì xe bị chặn, quân cờ tướng đứng trên đường chéo thì tượng cờ vua bị chặn.</li>
+</ul>
+
+<h2>Chiếu, thắng, hòa</h2>
+<ul>
+<li>Sau nước đi của bạn, vua Lam hoặc tướng Đỏ của bạn không được ở thế bị ăn. Khi bị chiếu, bạn phải đi nước thoát chiếu. Trên bản số, chỉ các nước hợp lệ mới được tô sáng.</li>
+<li><b>Đỏ thắng khi chiếu hết vua Lam:</b> vua bị tấn công và Lam không còn nước đi hợp lệ.</li>
+<li><b>Lam thắng khi bắt tướng Đỏ:</b> tướng bị tấn công và Đỏ không thể thoát, ván kết thúc ngay.</li>
+<li><b>Hòa:</b> hai bên đồng ý hòa, một thế cờ lặp lại ba lần, hoặc bên đến lượt hết nước đi hợp lệ mà không bị chiếu.</li>
+<li>Không có nhập thành và không có bắt tốt qua đường.</li>
+</ul>
+
+<h2>Các chế độ chơi</h2>
+<ul>
+<li><b>Song Kỳ:</b> Đỏ chơi cờ tướng, Lam chơi cờ vua, như mô tả ở trên.</li>
+<li><b>Song Kỳ cân bằng:</b> như Song Kỳ nhưng Lam bỏ hậu và hai tốt ở cột B, H, còn Đỏ thêm một xe ở E3. Cho máy tự đấu với nhau, bản này cho tỷ lệ thắng hai bên gần nhau hơn nhiều so với Song Kỳ gốc.</li>
+<li><b>Cờ tướng thuần túy:</b> cả hai bên chơi cờ tướng trên bàn 9×10. Lam xếp đối xứng với Đỏ ở phía trên và có cung riêng ở hàng 8–10. Hai tướng không được đối mặt trên cùng một cột khi không có quân ở giữa. Bên hết nước đi hợp lệ thì thua.</li>
+<li><b>Cờ úp:</b> hai bên chơi cờ tướng, chỉ tướng để ngửa. 30 quân còn lại, lấy từ cả bộ đỏ và bộ xanh, được xáo trộn ngẫu nhiên rồi úp xuống các vị trí xuất phát (ký hiệu 暗). Quân úp đi theo luật của vị trí nó đang đứng, ví dụ úp ở vị trí mã thì đi như mã. Sau nước đi đầu tiên, quân được lật ra thành quân thật, thuộc về người vừa đi, và từ đó đi theo luật của chính nó. Quân lật ra mà không hợp chỗ, như sĩ hay tượng đứng ngoài cung hoặc bên kia sông, vẫn giữ luật gốc nên có thể khó di chuyển. Các luật còn lại như cờ tướng thuần túy.</li>
+<li><b>Cờ vua thuần túy:</b> cả hai bên chơi cờ vua trên bàn 8×8 ô, xếp quân chuẩn, Đỏ đi trước. Bản này chưa có nhập thành và bắt tốt qua đường.</li>
+</ul>
+<p>Ở cả bốn chế độ, bạn có thể chọn <b>Đối thủ</b> là Người (hai người chơi chung một thiết bị) hoặc Máy. Khi chơi với máy, chọn cấp độ Dễ, Thường, Sơ trung, Trung, Đại tướng hoặc Đại cao thủ, và chọn bên bạn cầm. Cấp càng cao, máy tính càng sâu và nghĩ càng lâu: Đại tướng và Đại cao thủ có thể mất vài giây mỗi nước. Nút “Đi lại” lùi cả nước của máy lẫn nước của bạn.</p>
+
+<h2>Cách dùng bản số</h2>
+<ul>
+<li>Bấm vào quân của bạn để thấy các nước đi: chấm xanh là điểm trống, vòng đỏ là quân có thể ăn. Bấm vào điểm đó để đi.</li>
+<li>Hai bên luân phiên, mỗi lượt một nước. Mỗi lượt bạn chọn một quân tùy ý.</li>
+<li>Vua hoặc tướng bị chiếu sẽ có vòng đỏ bao quanh. “Đi lại” lùi một nước.</li>
+</ul>
+<p class="note">Vị trí xuất phát theo đúng bản quy ước trong bộ luật. Bên Đỏ ở phía dưới và đi trước, bên Lam ở phía trên.</p>
+</main>
+
+<script>
+const S=60,M=44,NM={r:'Đỏ',b:'Lam'},COL={r:'#b3261e',b:'#1d3a7a'};
+const D4=[[1,0],[-1,0],[0,1],[0,-1]],DG=[[1,1],[1,-1],[-1,1],[-1,-1]],D8=D4.concat(DG);
+const X=i=>i%9,Y=i=>i/9|0,ok=(x,y)=>x>=0&&x<NX&&y>=0&&y<NY,C=i=>'ABCDEFGHI'[X(i)]+(Y(i)+1);
+const G=p=>p[1]=='c'?'♚♛♜♝♞♟'['KQRBNP'.indexOf(p[2])]+'\uFE0E':(p[0]=='r'?'帥仕相俥傌炮兵':'將士象車馬砲卒')['gaerncp'.indexOf(p[2])];
+let bd,turn,last,end,st,hist,sel,legal,pend,mode='song',NX=9,NY=10,vs=0,me='r',thinking=false,aiId=0;
+const LEG={sb:'Song Kỳ cân bằng: Lam bỏ hậu và hai tốt ở B, H; Đỏ thêm một xe ở E3. Đỏ đi trước.',song:'Đỏ chơi cờ tướng (quân tròn), Lam chơi cờ vua (quân vuông). Đỏ ở dưới và đi trước.',xq:'Cờ tướng thuần túy: hai bên đều chơi cờ tướng. Đỏ ở dưới và đi trước.',up:'Cờ úp: chỉ tướng để ngửa, các quân khác úp ngẫu nhiên và lật khi đi lần đầu. Đỏ đi trước.',ch:'Cờ vua thuần túy: bàn 8×8, chưa có nhập thành và bắt tốt qua đường. Đỏ ở dưới và đi trước.'};
+
+function init(m){
+  if(m)mode=m;
+  NX=mode=='ch'?8:9;NY=mode=='ch'?8:10;
+  bd=Array(90).fill(null);
+  const P=(s,x,y,sy,t)=>bd[(s=='r'?y:NY-1-y)*9+x]=s+sy+t;
+  const XQ=s=>{'rneagaenr'.split('').forEach((t,i)=>P(s,i,0,'x',t));P(s,1,2,'x','c');P(s,7,2,'x','c');[0,2,4,6,8].forEach(x=>P(s,x,3,'x','p'))};
+  const CH=s=>'RNBQKBNR'.split('').forEach((t,i)=>{P(s,i,0,'c',t);P(s,i,1,'c','P')});
+  if(mode=='song'||mode=='sb'){XQ('r');const sb=mode=='sb';'RNBQKBNR'.split('').forEach((t,i)=>{const x=i<4?i:i+1;if(!(sb&&t=='Q'))P('b',x,0,'c',t);if(!(sb&&(x==1||x==7)))P('b',x,1,'c','P')});if(sb)P('r',4,2,'x','r')}
+  else if(mode=='xq'||mode=='up'){XQ('r');XQ('b');if(mode=='up'){const ix=[];bd.forEach((p,i)=>{if(p&&p[2]!='g')ix.push(i)});const pl=ix.map(i=>bd[i][2]);for(let i=pl.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[pl[i],pl[j]]=[pl[j],pl[i]]}ix.forEach((i,k)=>{bd[i]+=pl[k]})}}
+  else{CH('r');CH('b')}
+  turn='r';last=null;end=null;st=[];hist=[];sel=null;legal=[];pend=null;aiId++;thinking=false;
+  render();maybeAI();
+}
+
+function gen(b,i){
+  const p=b[i],s=p[0],sy=p[1],t=p[2],x=X(i),y=Y(i),d=s=='r'?1:-1,out=[];
+  const add=(nx,ny)=>{if(ok(nx,ny)){const q=b[ny*9+nx];if(!q||q[0]!=s)out.push(ny*9+nx)}};
+  const slide=ds=>{for(const[a,c]of ds){let nx=x+a,ny=y+c;while(ok(nx,ny)){const q=b[ny*9+nx];if(q){if(q[0]!=s)out.push(ny*9+nx);break}out.push(ny*9+nx);nx+=a;ny+=c}}};
+  const pal=(nx,ny)=>nx>=3&&nx<=5&&(s=='r'?ny>=0&&ny<=2:ny>=7&&ny<=9);
+  if(sy=='c'){
+    if(t=='K')D8.forEach(([a,c])=>add(x+a,y+c));
+    else if(t=='Q')slide(D8);
+    else if(t=='R')slide(D4);
+    else if(t=='B')slide(DG);
+    else if(t=='N')[[1,2],[2,1],[-1,2],[-2,1],[1,-2],[2,-1],[-1,-2],[-2,-1]].forEach(([a,c])=>add(x+a,y+c));
+    else{
+      const ny=y+d;
+      if(ok(x,ny)&&!b[ny*9+x]){out.push(ny*9+x);if(y==(s=='r'?1:NY-2)&&!b[(y+2*d)*9+x])out.push((y+2*d)*9+x)}
+      [-1,1].forEach(a=>{const nx=x+a;if(ok(nx,ny)){const q=b[ny*9+nx];if(q&&q[0]!=s)out.push(ny*9+nx)}});
+    }
+  }else{
+    if(t=='g')D4.forEach(([a,c])=>{if(pal(x+a,y+c))add(x+a,y+c)});
+    else if(t=='a')DG.forEach(([a,c])=>{if(pal(x+a,y+c))add(x+a,y+c)});
+    else if(t=='e')DG.forEach(([a,c])=>{const nx=x+2*a,ny=y+2*c;if(ok(nx,ny)&&!b[(y+c)*9+x+a]&&(s=='r'?ny<=4:ny>=5))add(nx,ny)});
+    else if(t=='r')slide(D4);
+    else if(t=='n')D4.forEach(([a,c])=>{const lx=x+a,ly=y+c;if(ok(lx,ly)&&!b[ly*9+lx]){if(a){add(x+2*a,y+1);add(x+2*a,y-1)}else{add(x+1,y+2*c);add(x-1,y+2*c)}}});
+    else if(t=='c'){
+      for(const[a,c]of D4){let nx=x+a,ny=y+c,scr=false;
+        while(ok(nx,ny)){const q=b[ny*9+nx];
+          if(!scr){if(q)scr=true;else out.push(ny*9+nx)}
+          else if(q){if(q[0]!=s)out.push(ny*9+nx);break}
+          nx+=a;ny+=c}}
+    }else{
+      add(x,y+d);
+      if(s=='r'?y>=5:y<=4){add(x+1,y);add(x-1,y)}
+    }
+  }
+  return out;
+}
+
+// bit 1: vua bị tấn công, bit 2: tướng bị tấn công (kể cả hai tướng đối mặt)
+function thr(b,s){
+  const o=s=='r'?'b':'r',k=b.indexOf(s+'cK'),g=b.indexOf(s+'xg');let r=0;
+  for(let i=0;i<90;i++){const p=b[i];if(p&&p[0]==o){const m=gen(b,i);if(k>=0&&m.includes(k))r|=1;if(g>=0&&m.includes(g))r|=2}}
+  const og=b.indexOf(o+'xg');
+  if(g>=0&&og>=0&&X(g)==X(og)){let c=1;for(let y=Math.min(Y(g),Y(og))+1;y<Math.max(Y(g),Y(og));y++)if(b[y*9+X(g)])c=0;if(c)r|=2}
+  return r;
+}
+const lf=i=>gen(bd,i).filter(t=>{const b=bd.slice();b[t]=b[i];b[i]=null;return !thr(b,bd[i][0])});
+
+const LV=[{},{d:1,z:70},{d:2,z:25},{d:3,z:6},{d:4,ms:2500},{d:8,ms:3000}];
+const VC={K:20000,Q:900,R:500,B:330,N:320,P:100},VX={g:20000,a:120,e:120,n:270,r:600,c:285,p:70};
+const val=p=>p.length>3?250:p[1]=='c'?VC[p[2]]:VX[p[2]];
+const mv=(p,t)=>p[1]=='c'&&p[2]=='P'&&Y(t)==(p[0]=='r'?NY-1:0)?p[0]+'cQ':p;
+function ev(b,s){let v=0;for(let i=0;i<90;i++){const p=b[i];if(!p)continue;let q=val(p);
+  if(p.length==3){if(p[1]=='c'&&p[2]=='P')q+=6*(p[0]=='r'?Y(i):NY-1-Y(i));else if(p[2]=='p')q+=(p[0]=='r'?Y(i)>=5:Y(i)<=4)?60:0}
+  v+=p[0]==s?q:-q}return v}
+let nodes,tEnd,abort;
+function nm(b,s,d,a,be){
+  if(abort)return 0;
+  if(++nodes%512==0&&Date.now()>tEnd){abort=1;return 0}
+  if(d==0)return ev(b,s);
+  const L=[];
+  for(let i=0;i<90;i++){const p=b[i];if(p&&p[0]==s)for(const t of gen(b,i))L.push([i,t,b[t]?val(b[t]):0])}
+  L.sort((x,y)=>y[2]-x[2]);
+  let best=-1e9;
+  for(const[f,t,cv]of L){
+    if(cv>=20000)return 19000+d;
+    const p=b[f],c=b[t];b[t]=mv(p,t);b[f]=null;
+    const v=-nm(b,s=='r'?'b':'r',d-1,-be,-a);
+    b[f]=p;b[t]=c;
+    if(v>best)best=v;if(v>a)a=v;if(a>=be)break;
+  }
+  return best==-1e9?-19000:best;
+}
+function pick(s,lv){
+  const L=[];for(let i=0;i<90;i++)if(bd[i]&&bd[i][0]==s)lf(i).forEach(t=>L.push([i,t,bd[t]?val(bd[t]):0]));
+  if(!L.length)return null;
+  const c=LV[lv];
+  if(!c.d){const cp=L.filter(m=>m[2]),po=cp.length&&Math.random()<.5?cp:L;return po[Math.random()*po.length|0]}
+  const o=s=='r'?'b':'r';tEnd=Date.now()+(c.ms||1500);abort=0;nodes=0;
+  let Q=L.sort((a,b)=>b[2]-a[2]),best=Q[0];
+  for(let d=1;d<=c.d;d++){
+    const cur=[];let bs=-1e9,bm=null;
+    for(const m of Q){
+      const f=m[0],t=m[1],p=bd[f],cp=bd[t];bd[t]=mv(p,t);bd[f]=null;
+      const v=-nm(bd,o,d-1,-1e9,c.z?1e9:-bs);
+      bd[f]=p;bd[t]=cp;
+      if(abort)break;
+      const w=v+(c.z?(Math.random()-.5)*2*c.z:0);cur.push([m,w]);if(w>bs){bs=w;bm=m}
+    }
+    if(abort){if(d==1&&bm)best=bm;break}
+    best=bm;Q=cur.sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
+  }
+  return best;
+}
+function maybeAI(){
+  if(end||!vs||turn==me)return;
+  const id=++aiId;thinking=true;render();
+  setTimeout(()=>{
+    if(id!=aiId)return;
+    const m=pick(turn,+document.getElementById('sLvl').value);thinking=false;
+    if(!m){render();return}
+    const p=bd[m[0]];
+    fin(m[0],m[1],p[1]=='c'&&p[2]=='P'&&Y(m[1])==(turn=='r'?NY-1:0)?'Q':undefined);
+  },60);
+}
+function click(i){
+  if(end||pend||thinking||(vs&&turn!=me))return;
+  if(sel!=null&&legal.includes(i))return go(sel,i);
+  const p=bd[i];
+  if(p&&p[0]==turn&&i!=sel){sel=i;legal=lf(i)}else{sel=null;legal=[]}
+  render();
+}
+function go(f,t){
+  const p=bd[f];
+  if(p[1]=='c'&&p[2]=='P'&&Y(t)==(turn=='r'?NY-1:0)){pend=[f,t];sel=null;legal=[];render();return}
+  fin(f,t);
+}
+function fin(f,t,pr){
+  st.push({b:bd.slice(),t:turn,l:last,e:end});
+  const p=bd[f],c=bd[t],np=pr?turn+'c'+pr:(p.length>3?p[0]+'x'+p[3]:p);
+  hist.push(G(p.length>3?np:p)+C(f)+(c?'×':'–')+C(t)+(pr?'='+G(turn+'cc'.slice(0,1)+pr):''));
+  bd[t]=np;bd[f]=null;last=[f,t];pend=null;sel=null;legal=[];
+  turn=turn=='r'?'b':'r';
+  let any=false;
+  for(let i=0;i<90&&!any;i++)if(bd[i]&&bd[i][0]==turn&&lf(i).length)any=true;
+  const th=thr(bd,turn),o=NM[turn=='r'?'b':'r'];
+  end=null;
+  if(!any)end=th?o+' thắng: '+(th&1?'chiếu hết vua.':'bắt tướng.'):mode=='xq'||mode=='up'?o+' thắng: đối phương hết nước đi.':'Hòa: bên đến lượt hết nước đi hợp lệ mà không bị chiếu.';
+  else{const key=bd.join()+turn;if(st.filter(s=>s.b.join()+s.t==key).length>=2)end='Hòa: thế cờ lặp lại ba lần.'}
+  render();maybeAI();
+}
+
+function render(){
+  const ch=mode=='ch',px=x=>M+x*S+(ch?S/2:0),py=y=>M+(NY-1-y)*S+(ch?S/2:0),ln='#2b4a3f';
+  let h='<rect width="568" height="'+(ch?568:628)+'" rx="12" fill="#c5d3b8"/>';
+  svg.setAttribute('viewBox','0 0 568 '+(ch?568:628));
+  if(ch){
+    for(let x=0;x<8;x++)for(let y=0;y<8;y++)h+='<rect x="'+(px(x)-S/2)+'" y="'+(py(y)-S/2)+'" width="'+S+'" height="'+S+'" fill="'+((x+y)%2?'#e4ecd8':'#8fae98')+'"/>';
+    h+='<g fill="'+ln+'" font-size="13" text-anchor="middle" dominant-baseline="central">';
+    for(let x=0;x<8;x++)h+='<text x="'+px(x)+'" y="'+(py(0)+S/2+16)+'">'+'ABCDEFGH'[x]+'</text>';
+    for(let y=0;y<8;y++)h+='<text x="'+(px(0)-S/2-16)+'" y="'+py(y)+'">'+(y+1)+'</text>';
+    h+='</g>';
+  }else{
+  h+='<rect x="'+px(0)+'" y="'+py(5)+'" width="'+8*S+'" height="'+S+'" fill="#a9c1b4" opacity=".55"/>';
+  h+='<g stroke="'+ln+'" stroke-width="1.6" fill="none">';
+  for(let y=0;y<10;y++)h+='<line x1="'+px(0)+'" x2="'+px(8)+'" y1="'+py(y)+'" y2="'+py(y)+'"/>';
+  for(let x=0;x<9;x++){
+    if(x%8==0)h+='<line x1="'+px(x)+'" x2="'+px(x)+'" y1="'+py(0)+'" y2="'+py(9)+'"/>';
+    else h+='<line x1="'+px(x)+'" x2="'+px(x)+'" y1="'+py(0)+'" y2="'+py(4)+'"/><line x1="'+px(x)+'" x2="'+px(x)+'" y1="'+py(5)+'" y2="'+py(9)+'"/>';
+  }
+  (mode=='xq'||mode=='up'?[[0,2],[7,9]]:[[0,2]]).forEach(([a,c])=>{h+='<line x1="'+px(3)+'" y1="'+py(a)+'" x2="'+px(5)+'" y2="'+py(c)+'"/><line x1="'+px(5)+'" y1="'+py(a)+'" x2="'+px(3)+'" y2="'+py(c)+'"/>'});
+  h+='</g><g fill="'+ln+'" font-size="13" text-anchor="middle" dominant-baseline="central">';
+  for(let x=0;x<9;x++)h+='<text x="'+px(x)+'" y="'+(py(0)+34)+'">'+'ABCDEFGHI'[x]+'</text>';
+  for(let y=0;y<10;y++)h+='<text x="'+(px(0)-32)+'" y="'+py(y)+'">'+(y+1)+'</text>';
+  h+='<text x="'+(px(4))+'" y="'+(py(5)+S/2)+'" font-size="20" font-family="Noto Serif TC,serif" letter-spacing="10">SÔNG</text></g>';}
+  if(last)last.forEach(i=>{h+='<rect x="'+(px(X(i))-27)+'" y="'+(py(Y(i))-27)+'" width="54" height="54" rx="8" fill="none" stroke="#c8962b" stroke-width="2.5" stroke-dasharray="5 4"/>'});
+  const th=end?0:thr(bd,turn);
+  for(let i=0;i<90;i++){
+    const p=bd[i];if(!p)continue;
+    const cx=px(X(i)),cy=py(Y(i)),c=COL[p[0]];
+    h+='<g transform="translate('+cx+' '+cy+')" fill="'+c+'" text-anchor="middle" dominant-baseline="central" style="pointer-events:none">';
+    if(p.length>3)h+='<circle r="26" fill="#6f7f77" stroke="'+c+'" stroke-width="3"/><text font-size="24" font-weight="700" font-family="Noto Serif TC,serif" fill="#eef3ee">暗</text>';
+    else if(p[1]=='x')h+='<circle r="26" fill="#f6f1e1" stroke="'+c+'" stroke-width="3"/><circle r="21" fill="none" stroke="'+c+'" stroke-width="1"/><text font-size="28" font-weight="700" font-family="Noto Serif TC,serif">'+G(p)+'</text>';
+    else h+='<rect x="-24" y="-24" width="48" height="48" rx="9" fill="#f6f1e1" stroke="'+c+'" stroke-width="3"/><text font-size="34">'+G(p)+'</text>';
+    if((th&1&&p==turn+'cK')||(th&2&&p==turn+'xg'))h+='<circle r="32" fill="none" stroke="#e11d1d" stroke-width="3.5"/>';
+    h+='</g>';
+  }
+  if(sel!=null)h+='<circle cx="'+px(X(sel))+'" cy="'+py(Y(sel))+'" r="31" fill="none" stroke="#c8962b" stroke-width="4"/>';
+  legal.forEach(i=>{const cx=px(X(i)),cy=py(Y(i));h+=bd[i]?'<circle cx="'+cx+'" cy="'+cy+'" r="31" fill="none" stroke="#d63a2e" stroke-width="4"/>':'<circle cx="'+cx+'" cy="'+cy+'" r="8" fill="#0f766e" opacity=".85"/>'});
+  for(let i=0;i<90;i++)if(X(i)<NX&&Y(i)<NY)h+='<circle data-i="'+i+'" cx="'+px(X(i))+'" cy="'+py(Y(i))+'" r="28" fill="transparent" style="cursor:pointer"/>';
+  svg.innerHTML=h;
+
+  document.querySelectorAll('#modes button').forEach(b=>b.classList.toggle('on',b.dataset.m==mode));
+  document.getElementById('leg').textContent=LEG[mode];document.getElementById('aiopt').hidden=!vs;
+  const t=document.getElementById('turn');
+  t.innerHTML=end?'Kết thúc ván':'<i class="dot" style="background:'+COL[turn]+'"></i>Lượt '+NM[turn];
+  const m=document.getElementById('msg');
+  if(end){m.textContent=end;m.className='w'}
+  else if(thinking){m.textContent='Máy đang suy nghĩ…';m.className=''}
+  else if(th){m.textContent=(th&1?'Vua ':'')+(th==3?'và ':'')+(th&2?'Tướng ':'')+NM[turn]+' đang bị chiếu. Hãy đi nước thoát chiếu.';m.className='w'}
+  else{m.textContent=pend?'Chọn quân để phong cấp.':'Bấm một quân của bạn để xem các nước đi.';m.className=''}
+  const pr=document.getElementById('promo');
+  pr.hidden=!pend;
+  if(pend)pr.innerHTML=[['Q','Hậu'],['R','Xe'],['B','Tượng'],['N','Mã']].map(([k,n])=>'<button data-k="'+k+'">'+G(turn+'c'+k)+' '+n+'</button>').join('');
+  const hl=document.getElementById('hist');
+  hl.innerHTML=hist.map((x,i)=>'<li class="'+(i%2?'b':'r')+'">'+x+'</li>').join('');
+  hl.scrollTop=hl.scrollHeight;
+}
+
+const svg=document.getElementById('svg');
+function ask(q,yes,no){const a=document.getElementById('ask');document.getElementById('aq').textContent=q;a.hidden=false;a.querySelector('.y').onclick=()=>{a.hidden=true;yes()};a.querySelector('.n').onclick=()=>{a.hidden=true;if(no)no()}}
+document.getElementById('modes').addEventListener('click',e=>{const m=e.target.dataset.m;if(!m||(m==mode&&!hist.length))return;const go2=()=>init(m);if(hist.length&&!end)ask('Đổi chế độ sẽ bắt đầu ván mới. Tiếp tục?',go2);else go2()});
+svg.addEventListener('click',e=>{const i=e.target.dataset.i;if(i!==undefined)click(+i)});
+document.getElementById('promo').addEventListener('click',e=>{const k=e.target.closest('button');if(k&&pend)fin(pend[0],pend[1],k.dataset.k)});
+document.getElementById('bu').onclick=()=>{if(thinking)return;aiId++;do{if(!st.length)break;const s=st.pop();bd=s.b;turn=s.t;last=s.l;end=s.e;hist.pop()}while(vs&&turn!=me&&st.length);sel=null;legal=[];pend=null;render();maybeAI()};
+document.getElementById('sOpp').onchange=document.getElementById('sMe').onchange=()=>{const a=+document.getElementById('sOpp').value,b=document.getElementById('sMe').value;const ap=()=>{vs=a;me=b;init()};if(hist.length&&!end)ask('Đổi thiết lập sẽ bắt đầu ván mới. Tiếp tục?',ap,()=>{document.getElementById('sOpp').value=vs;document.getElementById('sMe').value=me});else ap()};
+document.getElementById('bn').onclick=()=>{if(hist.length&&!end)ask('Bắt đầu ván mới?',()=>init());else init()};
+document.getElementById('bd').onclick=()=>{if(!end)ask('Hai bên đồng ý hòa?',()=>{end='Hòa: hai bên đồng ý.';sel=null;legal=[];pend=null;aiId++;thinking=false;render()})};
+document.getElementById('br').onclick=()=>{if(!end)ask('Bên '+NM[turn]+' xin thua?',()=>{end=NM[turn=='r'?'b':'r']+' thắng: đối phương xin thua.';sel=null;legal=[];pend=null;aiId++;thinking=false;render()})};
+const tab=n=>{document.getElementById('play').hidden=n!=1;document.getElementById('rules').hidden=n!=2;document.getElementById('t1').classList.toggle('on',n==1);document.getElementById('t2').classList.toggle('on',n==2)};
+document.getElementById('t1').onclick=()=>tab(1);
+document.getElementById('t2').onclick=()=>tab(2);
+init();
+</script>
+</body>
+</html>
